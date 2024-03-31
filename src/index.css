@@ -11,3 +11,86 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.mainWrapper {
+  margin: 20px;
+}
+
+.dropdown {
+  padding: 5px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.datePicker {
+  padding: 5px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.baseCurrencyDropdown{
+  margin-bottom: 20px;
+}
+
+.exchangeTable {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.exchangeTable th, .exchangeTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.exchangeTable th {
+  background-color: #f2f2f2;
+  text-align: left;
+}
+
+.currencyList {
+  list-style: none;
+  padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.currencyList li {
+  margin: 5px;
+}
+
+.currencyList button {
+  padding: 5px 10px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.currencyList button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* .currencyList{
+  list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.currencyList li{
+  margin: 5px;
+}
+
+.currencyList li button {
+  padding: 5px 10px;
+  background: #d5f6fc;
+  border-radius: 30px;
+  border: 1px solid #00d2f8;
+} */
