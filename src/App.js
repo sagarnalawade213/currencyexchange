@@ -15,6 +15,16 @@ function App() {
     handleAddCurrency,
     handleRemoveCurrency
   } = useExchangeRates();
+
+  const ExchangeRatesTD = (curr)=>{
+   const returnData =  exchangeRates[curr.data]?.map((item)=>{
+    console.log('item',item)
+      let key = Object.keys(item)[0]
+      console.log('key',key)
+      return(<li><span>{key} </span><span> {item[key]}</span></li>)
+  })
+    return(<ul>{returnData}</ul>) 
+  }
   return (
     <div className='mainWrapper'>
       <h1>Exchange Rates</h1>
@@ -56,7 +66,7 @@ function App() {
           {selectedCurrencies.map(currency => (
             <tr key={currency}>
               <td>{currency}</td>
-              <td>{ exchangeRates[currency] }</td>
+              <td><ExchangeRatesTD data={currency} /></td>
               <td>
                 <button onClick={() => handleRemoveCurrency(currency)}>Remove</button>
               </td>
