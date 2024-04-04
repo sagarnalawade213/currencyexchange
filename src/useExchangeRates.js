@@ -1,59 +1,51 @@
 import { useState, useEffect } from 'react';
 import Freecurrencyapi from '@everapi/freecurrencyapi-js';
 
-const API_KEY = 'fca_live_PICKSir9Jij6j5STnMFIcR8YFriZzshjNuHLsGLM';
+const API_KEY = 'fca_live_jhzOtl5uvgaZ8a7JLisbxc5rUpDK8sBARGQ7TQcO';
 const freecurrencyapi = new Freecurrencyapi(API_KEY);
+// getYesterdayDate Function to get yesterday's date because we are not able to get today's data.
 function getYesterdayDate() {
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    return yesterday.toISOString().slice(0, 10);
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  return yesterday.toISOString().slice(0, 10);
+}
+const generateDates = (numDays,selectedDate) => {
+  const dates = [];
+  const today = new Date();
+  const beforeOneDay  = today.setDate(today.getDate() - 1)
+  for (let i = 0; i < numDays; i++) {
+    const date = new Date(selectedDate ? selectedDate : beforeOneDay);
+
+    date.setDate(date.getDate() - i);
+    dates.push(date.toISOString().split('T')[0]);
   }
-  const generateDates = (numDays) => {
-    const dates = [];
-    const today = new Date();
-    const beforeOneDay  = today.setDate(today.getDate() - 1)
-    for (let i = 0; i < numDays; i++) {
-      const date = new Date(beforeOneDay);
-      date.setDate(date.getDate() - i);
-      dates.push(date.toISOString().split('T')[0]);
-    }
-    return dates;
-  };
+  return dates;
+};
 function useExchangeRates(initialBaseCurrency = 'USD', initialSelectedCurrencies = ['GBP', 'EUR', 'JPY', 'CHF', 'CAD', 'AUD', 'INR'], initialDate = getYesterdayDate()) {
+  
   const [baseCurrency, setBaseCurrency] = useState(initialBaseCurrency);
   const [selectedCurrencies, setSelectedCurrencies] = useState(initialSelectedCurrencies);
   const [exchangeRates, setExchangeRates] = useState({});
   const [availableCurrencies, setAvailableCurrencies] = useState({});
-  // const [fetchedCurrencies, setFetchedCurrencies] = useState([]);
   const [selectedDate, setSelectedDate] = useState(initialDate);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+ 
   useEffect(() => {
     const fetchData = async () => {
-      console.log(loading)
-      if(loading)return false
       setLoading(true);
       try {
-      
-        // let currenciesToFetch = selectedCurrencies.reduce((acc,item)=>{
-        //   if(!fetchedCurrencies.includes(item)){
-        //     acc.push(item)
-        //   }
-        //   return acc
-        // },[])
-        // if(currenciesToFetch.length === 0){
-        //     return false
-        // }
-        const dates = generateDates(7); // Function to generate 7 days of dates
+       
+        const dates = generateDates(7,selectedDate); // Function to generate 7 days of dates
         const ratesResponse = await Promise.all(
           dates.map(async (date) =>{
-            return (await freecurrencyapi.historical({ date: date, currencies: selectedCurrencies }))
+            return (await freecurrencyapi.historical({ date: date, currencies: selectedCurrencies,base_currency:baseCurrency }))
           })
           
         );
-        const currenciesResponse = await freecurrencyapi.currencies();
-        setAvailableCurrencies(currenciesResponse.data);
+        const currenciesResponse = await freecurrencyapi.currencies().then((response) => response.data);
+        setAvailableCurrencies(currenciesResponse);
          const responseData = ratesResponse.reduce((response,currentdata) => {
           const cData = currentdata.data
           const key = Object.keys(cData)[0]
@@ -61,18 +53,16 @@ function useExchangeRates(initialBaseCurrency = 'USD', initialSelectedCurrencies
         return response
         },{});
         
-  
-         const colData = selectedCurrencies.reduce((prvData,curData)=>{
-              
+         const exchangeRatesData = selectedCurrencies.reduce((allData,currentData)=>{
               const datesData = dates.map((date)=>{
-                const valObj = {}
-                valObj[date] = responseData[date][curData]
-                return valObj
+                const exchangeRatesDataHolder = {}
+                exchangeRatesDataHolder[date] = responseData[date][currentData]
+                return exchangeRatesDataHolder
               })
-              prvData[curData] = datesData
-              return prvData
+              allData[currentData] = datesData
+              return allData
             },{})
-        setExchangeRates(colData);
+        setExchangeRates(exchangeRatesData);
         setLoading(false);
         setError('');
       } catch (error) {
@@ -105,7 +95,7 @@ function useExchangeRates(initialBaseCurrency = 'USD', initialSelectedCurrencies
       setSelectedCurrencies(selectedCurrencies.filter(curr => curr !== currency));
     }
   };
-
+  console.log('call API')
   return {
     baseCurrency,
     selectedCurrencies,

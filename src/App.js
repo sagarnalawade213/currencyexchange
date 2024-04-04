@@ -18,34 +18,37 @@ function App() {
 
   const ExchangeRatesTD = (curr)=>{
    const returnData =  exchangeRates[curr.data]?.map((item)=>{
-    console.log('item',item)
-      let key = Object.keys(item)[0]
-      console.log('key',key)
-      return(<li><span>{key} </span><span> {item[key]}</span></li>)
+      let key = Object?.keys(item)[0]
+      return(<li>
+        <div><strong>Date: </strong><span>{key} </span></div>
+        <div><strong>Rate: </strong><span> {item[key]}</span></div>
+        </li>)
   })
-    return(<ul>{returnData}</ul>) 
+    return(<ul className='data-list'>{returnData}</ul>) 
   }
   return (
     <div className='mainWrapper'>
-      <h1>Exchange Rates</h1>
+      <h1>Check Exchange Rates</h1>
       {loading && <p>Loading...</p>}
-      {error && <p>Error: {error}</p>}
-      <div className='baseCurrencyDropdown'>
-        <label htmlFor="baseCurrency">Base Currency: </label>
-        <select id="baseCurrency" value={baseCurrency} onChange={handleBaseCurrencyChange} className='dropdown'>
-          {Object.keys(availableCurrencies).map(currency => (
-            <option key={currency} value={currency}>{currency}</option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <label htmlFor="selectedDate">Select Date: </label>
-        <input type="date" id="selectedDate" value={selectedDate} onChange={handleDateChange} className='datePicker'/>
+      
+      <div className='topWrapper'>
+        <div className='baseCurrencyDropdown'>
+          <label htmlFor="baseCurrency">Base Currency: </label>
+          <select id='baseCurrency' value={baseCurrency} onChange={handleBaseCurrencyChange} className='dropdown'>
+            {availableCurrencies && Object.keys(availableCurrencies).map(currency => (
+              <option key={currency} value={currency}>{currency}</option>
+            ))}
+          </select>
+        </div>
+        <div className='dateWrapper baseCurrencyDropdown'>
+          <label htmlFor="selectedDate">Select Date: </label>
+          <input type="date" id="selectedDate" value={selectedDate} onChange={handleDateChange} className='datePicker'/>
+        </div>
       </div>
       <div>
         <h2>Add Currency:</h2>
         <ul className='currencyList'>
-          {Object.keys(availableCurrencies).map(currency => (
+          {availableCurrencies && Object.keys(availableCurrencies).map(currency => (
             <li key={currency}>
               <button onClick={() => handleAddCurrency(currency)} disabled={selectedCurrencies.includes(currency)}>
                 {currency}
@@ -54,6 +57,7 @@ function App() {
           ))}
         </ul>
       </div>
+      {error && <p>Error: {error}</p>}
       <table className='exchangeTable'>
         <thead>
           <tr>
@@ -65,10 +69,10 @@ function App() {
         <tbody>
           {selectedCurrencies.map(currency => (
             <tr key={currency}>
-              <td>{currency}</td>
+              <td><h4>{currency}</h4></td>
               <td><ExchangeRatesTD data={currency} /></td>
               <td>
-                <button onClick={() => handleRemoveCurrency(currency)}>Remove</button>
+                <button onClick={() => handleRemoveCurrency(currency)} className='glowing-btn'>Remove</button>
               </td>
             </tr>
           ))}
